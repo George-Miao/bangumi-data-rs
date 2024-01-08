@@ -1,7 +1,11 @@
 [package]
-name    = "bangumi-data"
-version = "0.1.0"
-edition = "2021"
+name        = "bangumi-data"
+version     = "0.1.0"
+edition     = "2021"
+license     = "MIT"
+author      = ["George Miao <gm@miao.dev>"]
+description = "Rust binding for bangumi data"
+repository  = "https://github.com/George-Miao/bangumi-data-rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
