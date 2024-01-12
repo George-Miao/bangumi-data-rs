@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, fmt::Display, marker::PhantomData, str::FromStr
 
 use iso8601::DateTime;
 use nom::{branch::alt, bytes::complete::tag, combinator::map, sequence::tuple, IResult};
-use serde::{de::Visitor, Deserialize, Deserializer};
+use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
 
 const ROOT: &str = "https://github.com/bangumi-data/bangumi-data/raw/master";
 
@@ -49,7 +49,7 @@ pub async fn get_resource_site() -> Result<BTreeMap<String, SiteMeta>, reqwest::
         .await
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BangumiData {
     pub site_meta: BTreeMap<String, SiteMeta>,
@@ -70,7 +70,7 @@ impl BangumiData {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SiteMeta {
     pub title: String,
@@ -80,7 +80,7 @@ pub struct SiteMeta {
     pub regions: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[non_exhaustive]
 pub enum ItemType {
@@ -90,7 +90,7 @@ pub enum ItemType {
     Movie,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
     pub title: String,
@@ -110,7 +110,7 @@ pub struct Item {
     pub comment: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Site {
     pub site: String,
@@ -143,7 +143,25 @@ impl FromStr for Broadcast {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+impl Display for Broadcast {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let period = match self.period {
+            Period::Once => "0D",
+            Period::Daily => "1D",
+            Period::Weekly => "7D",
+            Period::Monthly => "1M",
+        };
+        write!(f, "R/{}/P{}", self.begin, period)
+    }
+}
+
+impl Serialize for Broadcast {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.collect_str(self)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Period {
     Once,
     Daily,
@@ -212,7 +230,7 @@ fn parse(input: &[u8]) -> IResult<&[u8], Broadcast> {
     )(input)
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum Language {
     #[serde(rename = "zh-Hans")]
