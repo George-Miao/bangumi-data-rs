@@ -143,6 +143,13 @@ impl FromStr for Broadcast {
     }
 }
 
+impl<'de> Deserialize<'de> for Broadcast {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let s = String::deserialize(deserializer)?;
+        Broadcast::from_str(&s).map_err(serde::de::Error::custom)
+    }
+}
+
 impl Display for Broadcast {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let period = match self.period {
