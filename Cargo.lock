@@ -46,7 +46,7 @@ dependencies = [
 
 [[package]]
 name = "bangumi-data"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "iso8601",
  "nom",
