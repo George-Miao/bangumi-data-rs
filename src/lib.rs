@@ -50,6 +50,7 @@ pub async fn get_resource_site() -> Result<BTreeMap<String, SiteMeta>, reqwest::
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct BangumiData {
     pub site_meta: BTreeMap<String, SiteMeta>,
@@ -71,6 +72,7 @@ impl BangumiData {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct SiteMeta {
     pub title: String,
@@ -81,6 +83,7 @@ pub struct SiteMeta {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(rename_all = "lowercase")]
 #[non_exhaustive]
 pub enum ItemType {
@@ -91,6 +94,7 @@ pub enum ItemType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
     pub title: String,
@@ -100,8 +104,10 @@ pub struct Item {
     pub lang: Language,
     pub official_site: String,
     #[serde(deserialize_with = "empty_str", default)]
+    #[cfg_attr(feature = "ts", ts(type = "Option<String>"))]
     pub begin: Option<DateTime>,
     #[serde(deserialize_with = "empty_str", default)]
+    #[cfg_attr(feature = "ts", ts(type = "Option<String>"))]
     pub end: Option<DateTime>,
     pub sites: Vec<Site>,
     #[serde(deserialize_with = "empty_str", default)]
@@ -111,6 +117,7 @@ pub struct Item {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct Site {
     pub site: String,
@@ -128,8 +135,11 @@ pub struct Site {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 pub struct Broadcast {
+    #[cfg_attr(feature = "ts", ts(type = "String"))]
     pub begin: DateTime,
+    #[cfg_attr(feature = "ts", ts(type = "String"))]
     pub period: Period,
 }
 
@@ -169,6 +179,7 @@ impl Serialize for Broadcast {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 pub enum Period {
     Once,
     Daily,
@@ -238,6 +249,7 @@ fn parse(input: &[u8]) -> IResult<&[u8], Broadcast> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[non_exhaustive]
 pub enum Language {
     #[serde(rename = "zh-Hans")]
