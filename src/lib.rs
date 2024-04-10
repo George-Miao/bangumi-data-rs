@@ -5,10 +5,11 @@ use nom::{branch::alt, bytes::complete::tag, combinator::map, sequence::tuple, I
 use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
 
 const ROOT: &str = "https://github.com/bangumi-data/bangumi-data/raw/master";
+const DIST: &str = "https://unpkg.com/bangumi-data@0.3/dist/data.json";
 
 #[cfg(feature = "reqwest")]
 pub async fn get_all() -> Result<BangumiData, reqwest::Error> {
-    reqwest::get(format!("{ROOT}/dist/data.json"))
+    reqwest::get(DIST)
         .await?
         .json()
         .await
@@ -265,6 +266,20 @@ pub enum Language {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_broadcast() {
+        const BYTES: &[u8] = b"R/2020-01-01T13:00:00Z/P0D";
+        let (_, a) = parse(BYTES).unwrap();
+        assert_eq!(a.period, Period::Once);
+
+        let a_str = a.to_string();
+        println!("{}", a_str);
+        assert_eq!(BYTES, a_str.as_bytes());
+        let (_, b) = parse(a_str.as_bytes()).unwrap();
+
+        assert_eq!(a, b);
+    }
 
     #[test]
     fn test_datetime() {
