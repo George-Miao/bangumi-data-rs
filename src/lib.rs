@@ -5,11 +5,10 @@ use nom::{branch::alt, bytes::complete::tag, combinator::map, sequence::tuple, I
 use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
 
 const ROOT: &str = "https://github.com/bangumi-data/bangumi-data/raw/master";
-const DIST: &str = "https://unpkg.com/bangumi-data@0.3/dist/data.json";
 
 #[cfg(feature = "reqwest")]
 pub async fn get_all() -> Result<BangumiData, reqwest::Error> {
-    reqwest::get(DIST)
+    reqwest::get(format!("{ROOT}/dist/data.json"))
         .await?
         .json()
         .await
