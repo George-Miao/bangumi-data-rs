@@ -165,6 +165,7 @@ impl Display for Broadcast {
         let period = match self.period {
             Period::Once => "0D",
             Period::Daily => "1D",
+            Period::BiDaily => "2D",
             Period::Weekly => "7D",
             Period::Monthly => "1M",
         };
@@ -183,6 +184,7 @@ impl Serialize for Broadcast {
 pub enum Period {
     Once,
     Daily,
+    BiDaily,
     Weekly,
     Monthly,
 }
@@ -231,6 +233,7 @@ fn parse_period(input: &[u8]) -> IResult<&[u8], Period> {
     alt((
         map(tag("0D"), |_| Period::Once),
         map(tag("1D"), |_| Period::Daily),
+        map(tag("2D"), |_| Period::BiDaily),
         map(tag("7D"), |_| Period::Weekly),
         map(tag("1M"), |_| Period::Monthly),
     ))(input)
