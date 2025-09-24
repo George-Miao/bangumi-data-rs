@@ -1,8 +1,8 @@
 use std::{collections::BTreeMap, fmt::Display, marker::PhantomData, str::FromStr};
 
 use iso8601::DateTime;
-use nom::{branch::alt, bytes::complete::tag, combinator::map, sequence::tuple, IResult};
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
+use nom::{IResult, branch::alt, bytes::complete::tag, combinator::map, sequence::tuple};
+use serde::{Deserialize, Deserializer, Serialize, de::Visitor};
 
 const ROOT: &str = "https://github.com/bangumi-data/bangumi-data/raw/master";
 
