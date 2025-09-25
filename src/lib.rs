@@ -1,7 +1,7 @@
 use std::{collections::BTreeMap, fmt::Display, marker::PhantomData, str::FromStr};
 
 use iso8601::DateTime;
-use nom::{IResult, branch::alt, bytes::complete::tag, combinator::map, sequence::tuple};
+use nom::{IResult, Parser, branch::alt, bytes::complete::tag, combinator::map};
 use serde::{Deserialize, Deserializer, Serialize, de::Visitor};
 
 const ROOT: &str = "https://github.com/bangumi-data/bangumi-data/raw/master";
@@ -236,19 +236,21 @@ fn parse_period(input: &[u8]) -> IResult<&[u8], Period> {
         map(tag("2D"), |_| Period::BiDaily),
         map(tag("7D"), |_| Period::Weekly),
         map(tag("1M"), |_| Period::Monthly),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn parse(input: &[u8]) -> IResult<&[u8], Broadcast> {
     map(
-        tuple((
+        (
             tag("R/"),
             iso8601::parsers::parse_datetime,
             tag("/P"),
             parse_period,
-        )),
+        ),
         |(_, begin, _, period)| Broadcast { begin, period },
-    )(input)
+    )
+    .parse(input)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
